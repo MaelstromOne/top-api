@@ -6,6 +6,7 @@ import { UserModel } from './user.model';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJwtConfig } from '../configs/jwt.config';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -18,13 +19,14 @@ import { getJwtConfig } from '../configs/jwt.config';
         },
       },
     ]),
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: getJwtConfig
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {
 }
