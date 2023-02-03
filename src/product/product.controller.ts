@@ -1,34 +1,65 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  UsePipes, ValidationPipe,
+} from '@nestjs/common';
 import { ProductModule } from './product.module';
 import { FindProductDto } from './dto/find-product.dto';
+import { CreateProductDto } from './dto/create-product.dto';
+import { InjectModel } from 'nestjs-typegoose';
+import { ProductModel } from './product.model';
+import { ModelType } from '@typegoose/typegoose/lib/types';
+import { ProductService } from './product.service';
+import { PRODUCT_NOT_FOUND_ERROR } from './product.constants';
 
 @Controller('product')
 export class ProductController {
+  constructor(private readonly productService: ProductService) {
+  }
 
   @Post('create')
-  async create(@Body() dto: Omit<ProductModule, '_id'>) {
-
+  async create(@Body() dto: CreateProductDto) {
+    return this.productService.create(dto);
   }
 
   @Get(':id')
   async get(@Param('id') id: string) {
-
+    const product = await this.productService.findById(id);
+    if (!product) {
+      throw new NotFoundException(PRODUCT_NOT_FOUND_ERROR);
+    }
+    return product;
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-
+    const deleteProduct = await this.productService.deleteById(id);
+    if (!deleteProduct) {
+      throw new NotFoundException(PRODUCT_NOT_FOUND_ERROR);
+    }
   }
 
   @Patch(':id')
-  async patch(@Param('id') id: string, @Body() dto: ProductModule) {
-
+  async patch(@Param('id') id: string, @Body() dto: ProductModel) {
+    const updateProduct = await this.productService.updateById(id, dto);
+    if (!updateProduct) {
+      throw new NotFoundException(PRODUCT_NOT_FOUND_ERROR);
+    }
+    return updateProduct;
   }
 
+  @UsePipes(new ValidationPipe())
   @HttpCode(200)
-  @Post()
+  @Post('find')
   async find(@Body() dto: FindProductDto) {
-
+    return this.productService.findWithReviews(dto);
   }
 
 }

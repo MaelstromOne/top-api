@@ -18,16 +18,13 @@ export class ProductModel extends TimeStamps {
   title: string;
 
   @prop()
-  price: string;
+  price: number;
 
   @prop()
-  oldPrice: string;
+  oldPrice?: number;
 
   @prop()
-  credit: string;
-
-  @prop()
-  calculateRating: string;
+  credit: number;
 
   @prop()
   description: string;
