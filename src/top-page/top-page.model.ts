@@ -14,13 +14,13 @@ export class HhData {
   count: number;
 
   @prop()
-  juniorSalary: string;
+  juniorSalary: number;
 
   @prop()
-  middleSalary: string;
+  middleSalary: number;
 
   @prop()
-  seniorSalary: string;
+  seniorSalary: number;
 }
 
 export class TopPageAdvantage {
